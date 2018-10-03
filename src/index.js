@@ -23,7 +23,7 @@ const resolvers = {
       return 'Toshi'
     },
     age() {
-      return 27
+      return 28
     },
     employed() {
       return true
