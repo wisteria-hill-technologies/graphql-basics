@@ -6,6 +6,7 @@ import { GraphQLServer } from 'graphql-yoga'
 const typeDefs = `
   type Query {
     greeting(name: String): String
+    grades: [Int!]!
     me: User!
     post: Post!
   }
@@ -34,6 +35,9 @@ const resolvers = {
       } else {
         return 'Hello!!';
       }
+    },
+    grades(parent, args, ctx, info) {
+      return [99, 80, 75];
     },
     me() {
       return {
