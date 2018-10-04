@@ -52,20 +52,33 @@ const posts = [
     published: true,
     author: '2'
   },
+  {
+    id: '004',
+    title: 'What about C++??',
+    body: 'Shall I learn C++...?',
+    published: true,
+    author: '1'
+  },
 ];
 
 const comments = [
   {
     id: '100',
-    text: 'This is a great post'
+    text: 'This is a great post',
+    author: '4',
+    post: '001'
   },
   {
     id: '200',
-    text: 'This post is cool!'
+    text: 'This post is cool!',
+    author: '2',
+    post: '002'
   },
   {
     id: '300',
-    text: 'Here is my comments...'
+    text: 'Here is my comments...',
+    author: '1',
+    post: '004'
   },
 ];
 
@@ -86,6 +99,7 @@ const typeDefs = `
     email: String!
     age: Int
     posts: [Post!]!
+    comments: [Comment!]!
   }
   
   type Post {
@@ -94,11 +108,14 @@ const typeDefs = `
     body: String!
     published: Boolean!
     author: User!
+    comments: [Comment!]!
   }
   
   type Comment {
     id: ID!
     text: String!
+    author: User!
+    post: Post!
   }
 `;
 
@@ -149,11 +166,25 @@ const resolvers = {
   Post: {
     author(parent, args, ctx, info) {
       return users.find(user => user.id === parent.author);
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter(comment => comment.post=== parent.id);
+    }
+  },
+  Comment: {
+    author(parent, args, ctx, info) {
+      return users.find(user => user.id === parent.author);
+    },
+    post(parent, args, ctx, info) {
+      return posts.find(post => post.id === parent.post);
     }
   },
   User: {
     posts(parent, args, ctx, info) {
       return posts.filter(post => post.author === parent.id);
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter(comment => comment.author === parent.id);
     }
   }
 };
