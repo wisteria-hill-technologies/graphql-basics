@@ -54,6 +54,21 @@ const posts = [
   },
 ];
 
+const comments = [
+  {
+    id: '100',
+    text: 'This is a great post'
+  },
+  {
+    id: '200',
+    text: 'This post is cool!'
+  },
+  {
+    id: '300',
+    text: 'Here is my comments...'
+  },
+];
+
 
 // Type definition (schema)
 const typeDefs = `
@@ -62,6 +77,7 @@ const typeDefs = `
     me: User!
     post: Post!
     posts(query: String): [Post!]!
+    comments (query: String): [Comment!]!
   }
   
   type User {
@@ -78,6 +94,11 @@ const typeDefs = `
     body: String!
     published: Boolean!
     author: User!
+  }
+  
+  type Comment {
+    id: ID!
+    text: String!
   }
 `;
 
@@ -102,6 +123,12 @@ const resolvers = {
         return titleIncludesQuery || bodyIncludesQuery;
       });
     },
+    comments(parent, args, ctx, info) {
+      if(!args.query) {
+        return comments;
+      }
+      return comments.filter(comment => comment.text.includes(args.query));
+    },
     me() {
       return {
         id: '123abc',
@@ -117,11 +144,16 @@ const resolvers = {
         body: 'Hello, World!!!',
         published: true
       }
-    }
+    },
   },
   Post: {
     author(parent, args, ctx, info) {
       return users.find(user => user.id === parent.author);
+    }
+  },
+  User: {
+    posts(parent, args, ctx, info) {
+      return posts.filter(post => post.author === parent.id);
     }
   }
 };
