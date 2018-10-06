@@ -94,9 +94,28 @@ const typeDefs = `
   }
   
   type Mutation {
-    createUser(name: String!, email: String!, age: Int): User!
-    createPost(title: String!, body: String!, published: Boolean!, author: ID!): Post!
-    createComment(text: String!, author: ID!, post: ID!): Comment!
+    createUser(data: CreateUserInput): User!
+    createPost(data: CreatePostInput): Post!
+    createComment(data: CreateCommentInput): Comment!
+  }
+  
+  input CreatePostInput {
+    title: String!,
+    body: String!,
+    published: Boolean!,
+    author: ID!
+  }
+  
+  input CreateCommentInput {
+    text: String!,
+    author: ID!,
+    post: ID!
+  }
+  
+  input CreateUserInput {
+    name: String!
+    email: String!
+    age: Int
   }
   
   type User {
@@ -171,16 +190,14 @@ const resolvers = {
   },
   Mutation: {
     createUser(parent, args, ctx, info) {
-      const emailTaken = users.some((user) => user.email === args.email);
+      const emailTaken = users.some((user) => user.email === args.data.email);
       if(emailTaken) {
         throw new Error('Email taken.');
       }
 
       const user = {
         id: uuidv4(),
-        name: args.name,
-        email: args.email,
-        age: args.age
+        ...args.data
       };
 
       users.push(user);
@@ -189,16 +206,13 @@ const resolvers = {
     },
     createPost(parent, args, ctx, info) {
 
-      const userExists = users.some(user => user.id === args.author);
+      const userExists = users.some(user => user.id === args.data.author);
       if(!userExists) {
         throw Error('User not found.');
       }
       const post = {
         id: uuidv4(),
-        title: args.title,
-        body: args.body,
-        published: args.published,
-        author: args.author
+        ...args.data
       };
 
       posts.push(post);
@@ -206,8 +220,8 @@ const resolvers = {
       return post;
     },
     createComment(parent, args, ctx, info) {
-      const postExists = posts.some(post => (post.id === args.post) && post.published);
-      const userExists = users.some(user => user.id === args.author);
+      const postExists = posts.some(post => (post.id === args.data.post) && post.published);
+      const userExists = users.some(user => user.id === args.data.author);
       if(!postExists) {
         throw Error('Post not found or published');
       }
@@ -216,9 +230,7 @@ const resolvers = {
       }
       const comment = {
         id: uuidv4(),
-        text: args.text,
-        author: args.author,
-        post: args.post
+        ...args.data
       }
       comments.push(comment);
       return comment;
