@@ -33,7 +33,7 @@ const Query = {
   },
   post() {
     return {
-      id: '092',
+      id: '001',
       title: 'GraphQL 101',
       body: 'Hello, World!!!',
       published: true
