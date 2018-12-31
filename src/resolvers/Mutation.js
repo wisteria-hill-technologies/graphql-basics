@@ -153,6 +153,7 @@ const Mutation = {
       ...args.data
     };
     db.comments.push(comment);
+    // publish comment to subscription channel.
     pubsub.publish(`comment ${args.data.post}`, {
       comment: {
         mutation: 'CREATED',
