@@ -43,7 +43,7 @@ type CommentSubscriptionPayload {
 ```
 
 ## How to publish
-Examplle below
+Examples below
 ``` 
 pubsub.publish('post', {
     post: {
