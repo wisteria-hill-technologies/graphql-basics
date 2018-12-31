@@ -1,4 +1,4 @@
-# graphql-server-practice
+# GraphQL Server Basic Examples
 
 ## How to install
 - clone this repo.
