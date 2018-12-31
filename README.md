@@ -16,3 +16,47 @@ You can do the following:
 
 ## Data
 - Currently, using a fake data (no database used)
+
+
+## schema.graphql
+```
+type Subscription {
+    post: PostSubscriptionPayload!
+    comment(postId: ID!): CommentSubscriptionPayload!
+}
+
+enum MutationType {
+    CREATED
+    UPDATED
+    DELETED
+}
+
+type PostSubscriptionPayload {
+    mutation: MutationType!
+    data: Post!
+}
+
+type CommentSubscriptionPayload {
+    mutation: MutationType!
+    data: Comment!
+}
+```
+
+## How to publish
+Examplle below
+``` 
+pubsub.publish('post', {
+    post: {
+      mutation: 'CREATED',
+      data: post
+    }
+});
+```
+``` 
+pubsub.publish(`comment ${args.data.post}`, {
+  comment: {
+    mutation: 'CREATED',
+    data: comment
+  }
+});
+```

@@ -67,6 +67,7 @@ const Mutation = {
     };
 
     db.posts.push(post);
+    // if published is set to be true, then publish the post to the post channel.
     if (args.data.published) {
       pubsub.publish('post', {
         post: {
@@ -114,6 +115,7 @@ const Mutation = {
       post.published = data.published;
 
       if (originalPost.published && !post.published) {
+        //if the post was published before but not published anymore.  Send public message saying that it is deleted, even though it was not actually deleted in the database. It is just changed to 'unpublished'
         pubsub.publish('post', {
           post: {
             mutation: 'DELETED',
@@ -121,6 +123,7 @@ const Mutation = {
           }
         })
       } else if(!originalPost.published && post.published) {
+        // if the post was not published before, but now published, send public message saying that it was created, even though the post already existed.
         pubsub.publish('post', {
           post: {
             mutation: 'CREATED',
